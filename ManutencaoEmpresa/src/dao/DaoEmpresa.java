@@ -20,12 +20,11 @@ import java.util.List;
 public class DaoEmpresa {
     
     public static boolean inserir(Empresa objeto) {
-        String sql = "INSERT INTO empresa (codigo, nomefantasia, razaosocial) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO empresa (nomefantasia, razaosocial) VALUES (?, ?)";
         try {
             PreparedStatement ps = conexao.Conexao.getConexao().prepareStatement(sql);
-            ps.setInt(1, objeto.getCodigo());
-            ps.setString(2, objeto.getNomefantasia());
-            ps.setString(3, objeto.getRazaosocial());
+            ps.setString(1, objeto.getNomefantasia());
+            ps.setString(2, objeto.getRazaosocial());
             ps.executeUpdate();
             return true;
         } catch (SQLException | ClassNotFoundException ex) {
@@ -99,6 +98,27 @@ public class DaoEmpresa {
             return null;
         }
 }
-
+      
+      public static Empresa consultar(int primaryKey) {
+        //editar o SQL conforme a entidade
+        String sql = "SELECT codigo, nomefantasia, razaosocial FROM empresa WHERE codigo=?";
+        PreparedStatement ps;
+        try {
+            ps = conexao.Conexao.getConexao().prepareStatement(sql);
+            ps.setInt(1, primaryKey);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Empresa objeto = new Empresa();
+                //definir um set para cada atributo da entidade, cuidado com o tipo
+                objeto.setCodigo(rs.getInt("codigo"));
+                objeto.setNomefantasia(rs.getString("nomefantasia"));
+                objeto.setRazaosocial(rs.getString("razaosocial"));
+                return objeto;//não mexa nesse, ele adiciona o objeto na lista
+            }
+        } catch (SQLException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return null;
+    }
     
 }
